@@ -11,18 +11,17 @@ object Day7 {
 
     def main(args: Array[String]) {
         val input = Problem.parseInputToList("day7")
-        println(part1(input))
-        println(part2(input))
+        val root = part1(input)
+        println(root)
+        println(part2(input, root))
     }
 
     def part1(input: List[String]) =
         new WeightedUndirectedGraph(constructGraph(input)).getRootNodes.head
 
-    def part2(input: List[String]) = {
+    def part2(input: List[String], root: String) = {
         val weights = getWeights(input)
         val graph   = new WeightedUndirectedGraph(constructGraph(input))
-
-        val root = graph.getRootNodes.head
 
         @tailrec
         def findWeightDifference(root: String): Int = {
@@ -36,12 +35,10 @@ object Day7 {
 
             val different_ws = childrenWeights(diffN, graph, weights)
 
-            if (different_ws.toSet.size == 1) {
-                val otherWeight = ws.filter(_._2 != diffW).head._2
-                weights(diffN) + (otherWeight - diffW)
-            } else {
+            if (childrenWeights(diffN, graph, weights).toSet.size == 1)
+                weights(diffN) + (ws.filter(_._2 != diffW).head._2 - diffW)
+            else
                 findWeightDifference(diffN)
-            }
         }
 
         findWeightDifference(root)
