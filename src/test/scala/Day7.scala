@@ -57,7 +57,7 @@ class Day7Spec extends AnyFunSuite {
 
     test("Day 7: part2") {
         assertResult(60) {
-            Day7.part2(input)
+            Day7.part2(input, "tknk")
         }
     }
 }
