@@ -11,20 +11,16 @@ class Day10Spec extends AnyFunSuite {
         val lengths = List(3, 4, 1, 5)
         val cl = CircularList(5)(0, 1, 2, 3, 4)
 
-        assertResult(Queue(3, 4, 2, 1, 0)) {
-            Day10.runHashes(cl, 0, 0, lengths)._1.queue
-        }
-
         assertResult(12) {
             Day10.part1(0, 4, lengths)
         }
     }
 
     test("Day 10: getKnotHash") {
-        var lengths = "test"
+        var lengths = "AoC 2017"
 
-        assertResult("309ae6e8f3cb4acbfcdd3c3f30fcf3") {
-            Day10.getKnotHash(0, 255, lengths)
+        assertResult("33efeb34ea91902bb2f59c9920caa6cd") {
+            KnotHash.getKnotHash(lengths)
         }
     }
 }
