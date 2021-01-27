@@ -31,8 +31,9 @@ object KnotHash {
             asciiLengths.foldLeft(acc)(_.hash(_))
         ).elems.queue.toList
 
+
         sparse.grouped(16).map(_.reduce((a, b) => a ^ b))
-              .map(_.toHexString).mkString
+              .map(_.formatted("%02x")).mkString
     }
 }
 
