@@ -16,53 +16,36 @@ object Day18 {
     }
 
     def part1(lines: List[List[String]]) =
-        run(lines, Map[String, Long]().withDefaultValue(0))
+        findFreq(lines, Map[String, Long]().withDefaultValue(0))
 
-    def run(lines: List[List[String]], init: Machine): Long = {
+    def findFreq(lines: List[List[String]], init: Machine): Long = {
         @tailrec
-        def run_(regs: Machine, freq: Long, ptr: Int): Long = {
-            if (ptr < 0 || ptr >= lines.size) freq
-            else {
-                val (r, f, p) = runCommand(lines(ptr), regs, freq, ptr)
-                run_(r, f, p)
-            }
+        def find_(s: ProgramState): Long = {
+            if (s.ptr < 0 || s.ptr >= lines.size) s.freq
+            else find_(runFreq(lines(s.ptr), s))
         }
 
-        run_(init, 0, 0)
+        find_(ProgramState(init, 0, 0))
     }
 
-    private def runCommand
-        ( line: List[String]
-        , regs: Machine
-        , freq: Long
-        , ptr: Int
-        ) = {
-
+    private def runFreq(line: List[String], s: ProgramState) = {
         val com :: args = line
         val reg = args(0)
 
         com match {
-            case "snd" => (regs, regs(reg), ptr + 1)
+            case "snd" => s.setFreq(s.get(reg)).next
             case "set" => args(1) match {
-                case numeric(_) =>
-                    (regs.updated(reg, args(1).toLong), freq, ptr + 1)
-                case _ => (regs.updated(reg, regs(args(1))), freq, ptr + 1)
+                case numeric(_) => s.update(reg, args(1).toLong).next
+                case _ => s.update(reg, s.get(args(1))).next
             }
-            case "rcv" =>
-                if (regs(reg) != 0) (regs, freq, -1)
-                else (regs, freq, ptr + 1)
+            case "rcv" => if (s.regs(reg) != 0) s.jumpTo(-1) else s.next
             case "jgz" =>
-                if (regs(reg) > 0) (regs, freq, ptr + args(1).toInt)
-                else (regs, freq, ptr + 1)
+                if (s.regs(reg) > 0) s.jump(args(1).toInt) else s.next
             case _ => args(1) match {
-                case numeric(_) => (
-                    regs.updated(reg, strToOp(com)(regs(reg), args(1).toLong)),
-                    freq, ptr + 1
-                )
-                case _ => (
-                    regs.updated(reg, strToOp(com)(regs(reg), regs(args(1)))),
-                    freq, ptr + 1
-                )
+                case numeric(_) =>
+                    s.update(reg, strToOp(com)(s.regs(reg), args(1).toLong)).next
+                case _ =>
+                    s.update(reg, strToOp(com)(s.regs(reg), s.regs(args(1)))).next
             }
         }
     }
@@ -74,3 +57,19 @@ object Day18 {
             case "mod" => _ % _
         }
 }
+
+case class ProgramState(regs: Day18.Machine, ptr: Int, freq: Long) {
+
+    def next = copy(ptr = ptr + 1)
+
+    def jump(value: Int) = copy(ptr = ptr + value)
+
+    def jumpTo(value: Int) = copy(ptr = value)
+
+    def get(reg: String) = regs(reg)
+
+    def update(reg: String, value: Long) = copy(regs = regs.updated(reg, value))
+
+    def setFreq(value: Long) = copy(freq = value)
+}
+
