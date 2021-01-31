@@ -9,10 +9,10 @@ class Day18Spec extends AnyFunSuite {
     test("Day 18: run") {
         val input = Problem.parseInputToList("day18-test").map(_.split(" ").toList)
 
-        val init = Map("a" -> 0)
+        val init = Map("a" -> 0L)
 
         assertResult(4) {
-            Day18.run(input, init)
+            Day18.findFreq(input, init)
         }
     }
 }
