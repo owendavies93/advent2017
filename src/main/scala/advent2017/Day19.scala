@@ -14,11 +14,11 @@ object Day19 {
     }
 
     def part1(lines: List[String]) = {
-        val grid =  Day19.generateGrid(lines)
+        val grid =  Day19.generateDiag(lines)
         traverse(grid, Point(13, 0), D)
     }
 
-    def traverse(g: Grid, start: Point, dir: Direction.Value): (String, Int) = {
+    def traverse(g: Diag, start: Point, dir: Direction.Value): (String, Int) = {
         @tailrec
         def traverse_
             ( p: Point
@@ -65,11 +65,11 @@ object Day19 {
         else if (from.y < to.y) D
         else U
 
-    def generateGrid(lines: List[String]) =
-        Grid(lines.toArray.flatten, lines(0).size, lines.size)
+    def generateDiag(lines: List[String]) =
+        Diag(lines.toArray.flatten, lines(0).size, lines.size)
 }
 
-case class Grid(grid: Array[Char], width: Int, height: Int) {
+case class Diag(grid: Array[Char], width: Int, height: Int) {
 
     private val nonDiagNeighbourList = List[Point](
         Point(-1, 0), Point(0, -1), Point(1, 0), Point(0, 1)
