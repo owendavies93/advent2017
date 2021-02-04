@@ -27,7 +27,7 @@ object Day13 {
         val s = line.split(": ").map(_.toInt)
         new Layer(s(0), s(1))
     }
-}
 
-class Layer(val depth: Int, val range: Int)
+    case class Layer(depth: Int, range: Int)
+}
 

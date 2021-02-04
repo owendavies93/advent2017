@@ -7,13 +7,13 @@ object Day22 {
     import advent2017.Direction._
     import advent2017.NodeStatus._
 
-    type InfiniteGrid = Map[Pnt, NodeStatus.Value]
-    type Virus = (Pnt, Direction.Value)
+    type InfiniteGrid = Map[Point, NodeStatus.Value]
+    type Virus = (Point, Direction.Value)
 
     def main(args: Array[String]) {
         val lines = Problem.parseInputToList("day22")
         val grid: InfiniteGrid = constructGrid(lines)
-        val start: Virus = (Pnt(lines.size / 2, lines(0).size / 2), U)
+        val start: Virus = (Point(lines.size / 2, lines(0).size / 2), U)
         println(part1(lines, grid, start, 10000))
         println(part2(lines, grid, start, 10000000))
     }
@@ -77,7 +77,7 @@ object Day22 {
     def constructGrid(lines: List[String]) =
         (0 until lines.size).flatMap(y =>
             (0 until lines(0).size).map(x =>
-                Pnt(x, y) -> (if (lines(y)(x) == '#') Infected else Clean)
+                Point(x, y) -> (if (lines(y)(x) == '#') Infected else Clean)
             )
         ).toMap.withDefaultValue(Clean)
 
@@ -101,20 +101,18 @@ object Day22 {
         case L => R
         case R => L
     }
-}
 
-case class Pnt(x: Int, y: Int) {
-
-    import advent2017.Direction._
-
-    def next(d: Direction.Value) = d match {
-        case U => Pnt(x, y - 1)
-        case D => Pnt(x, y + 1)
-        case L => Pnt(x - 1, y)
-        case R => Pnt(x + 1, y)
+    case class Point(x: Int, y: Int) {
+        def next(d: Direction.Value) = d match {
+            case U => Point(x, y - 1)
+            case D => Point(x, y + 1)
+            case L => Point(x - 1, y)
+            case R => Point(x + 1, y)
+        }
     }
 }
 
 object NodeStatus extends Enumeration {
     val Clean, Infected, Weakened, Flagged = Value
 }
+

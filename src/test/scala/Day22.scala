@@ -10,7 +10,7 @@ class Day22Spec extends AnyFunSuite {
     )
 
     val grid = Day22.constructGrid(lines)
-    val start = (Pnt(lines.size / 2, lines(0).size / 2), Direction.U)
+    val start = (Day22.Point(lines.size / 2, lines(0).size / 2), Direction.U)
 
     test("Day 22: part1") {
         assert(Day22.part1(lines, grid, start, 7) == 5)

@@ -57,27 +57,26 @@ object Day20 {
         (ps.toSet -- dupes).toList
     }
 
-}
-
-class Vector(val x: Int, val y: Int, val z: Int) {
-    def add(v: Vector) = new Vector(x + v.x, y + v.y, z + v.z)
-}
-
-case class Particle
-    ( override val x: Int
-    , override val y: Int
-    , override val z: Int
-    , id: Int
-    , vel: Vector
-    , acc: Vector) extends Vector(x, y, z) {
-
-    def distance = abs(x) + abs(y) + abs(z)
-
-    def tick = {
-        val vel_ = vel.add(acc)
-        Particle(x + vel_.x, y + vel_.y, z + vel_.z, id, vel_, acc)
+    class Vector(val x: Int, val y: Int, val z: Int) {
+        def add(v: Vector) = new Vector(x + v.x, y + v.y, z + v.z)
     }
 
-    override def toString() = id.toString()
+    case class Particle
+        ( override val x: Int
+        , override val y: Int
+        , override val z: Int
+        , id: Int
+        , vel: Vector
+        , acc: Vector) extends Vector(x, y, z) {
+
+        def distance = abs(x) + abs(y) + abs(z)
+
+        def tick = {
+            val vel_ = vel.add(acc)
+            Particle(x + vel_.x, y + vel_.y, z + vel_.z, id, vel_, acc)
+        }
+
+        override def toString() = id.toString()
+    }
 }
 

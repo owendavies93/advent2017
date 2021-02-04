@@ -14,11 +14,11 @@ object Day19 {
     }
 
     def part1(lines: List[String]) = {
-        val grid =  Day19.generateDiag(lines)
+        val grid =  Day19.generateGrid(lines)
         traverse(grid, Point(13, 0), D)
     }
 
-    def traverse(g: Diag, start: Point, dir: Direction.Value): (String, Int) = {
+    def traverse(g: Grid, start: Point, dir: Direction.Value): (String, Int) = {
         @tailrec
         def traverse_
             ( p: Point
@@ -32,7 +32,7 @@ object Day19 {
                 case '|' => traverse_(next(p, d), d, out, count + 1)
                 case '-' => traverse_(next(p, d), d, out, count + 1)
                 case '+' => {
-                    val next = g.nonDiagNeighbours(p)
+                    val next = g.nonGridNeighbours(p)
                                 .filter(g.get(_) != ' ')
                                 .filter(nextDir(p, _) != inverse(d))(0)
 
@@ -65,25 +65,25 @@ object Day19 {
         else if (from.y < to.y) D
         else U
 
-    def generateDiag(lines: List[String]) =
-        Diag(lines.toArray.flatten, lines(0).size, lines.size)
+    def generateGrid(lines: List[String]) =
+        Grid(lines.toArray.flatten, lines(0).size, lines.size)
+
+    case class Grid(grid: Array[Char], width: Int, height: Int) {
+
+        private val nonGridNeighbourList = List[Point](
+            Point(-1, 0), Point(0, -1), Point(1, 0), Point(0, 1)
+        )
+
+        def get(p: Point) = grid(p.y * width + p.x)
+
+        def inBounds(p: Point) =
+            (0 until width).contains(p.x) && (0 until height).contains(p.y)
+
+        def nonGridNeighbours(p: Point) =
+            nonGridNeighbourList.map(n => Point(p.x + n.x, p.y + n.y))
+                                .filter(inBounds)
+    }
+
+    case class Point(x: Int, y: Int)
 }
-
-case class Diag(grid: Array[Char], width: Int, height: Int) {
-
-    private val nonDiagNeighbourList = List[Point](
-        Point(-1, 0), Point(0, -1), Point(1, 0), Point(0, 1)
-    )
-
-    def get(p: Point) = grid(p.y * width + p.x)
-
-    def inBounds(p: Point) =
-        (0 until width).contains(p.x) && (0 until height).contains(p.y)
-
-    def nonDiagNeighbours(p: Point) =
-        nonDiagNeighbourList.map(n => Point(p.x + n.x, p.y + n.y))
-                            .filter(inBounds)
-}
-
-case class Point(x: Int, y: Int)
 

@@ -108,6 +108,38 @@ object Day18 {
             case "mul" => _ * _
             case "mod" => _ % _
         }
+
+    case class MultiState
+        ( regs: Day18.Machine
+        , var other: MultiState
+        , ptr: Int = 0
+        , in: Queue[Long] = Queue.empty
+        , sent: Int = 0
+        , var blocked: Boolean = false) {
+
+        def next = copy(ptr = ptr + 1)
+
+        def jump(value: Int) = copy(ptr = ptr + value)
+
+        def jumpTo(value: Int) = copy(ptr = value)
+
+        def get(reg: String) = regs(reg)
+
+        def queue(value: Long) = in.enqueue(value)
+
+        def send = copy(sent = sent + 1)
+
+        def take(reg: String) = {
+            if (in.isEmpty)
+                copy(blocked = true)
+            else {
+                val (elem, in_) = in.dequeue
+                update(reg, elem).copy(in = in_)
+            }
+        }
+
+        def update(reg: String, value: Long) = copy(regs = regs.updated(reg, value))
+    }
 }
 
 case class ProgramState(regs: Day18.Machine, ptr: Int, freq: Long) {
@@ -120,38 +152,6 @@ case class ProgramState(regs: Day18.Machine, ptr: Int, freq: Long) {
     def get(reg: String) = regs(reg)
 
     def setFreq(value: Long) = copy(freq = value)
-
-    def update(reg: String, value: Long) = copy(regs = regs.updated(reg, value))
-}
-
-case class MultiState
-    ( regs: Day18.Machine
-    , var other: MultiState
-    , ptr: Int = 0
-    , in: Queue[Long] = Queue.empty
-    , sent: Int = 0
-    , var blocked: Boolean = false) {
-
-    def next = copy(ptr = ptr + 1)
-
-    def jump(value: Int) = copy(ptr = ptr + value)
-
-    def jumpTo(value: Int) = copy(ptr = value)
-
-    def get(reg: String) = regs(reg)
-
-    def queue(value: Long) = in.enqueue(value)
-
-    def send = copy(sent = sent + 1)
-
-    def take(reg: String) = {
-        if (in.isEmpty)
-            copy(blocked = true)
-        else {
-            val (elem, in_) = in.dequeue
-            update(reg, elem).copy(in = in_)
-        }
-    }
 
     def update(reg: String, value: Long) = copy(regs = regs.updated(reg, value))
 }
