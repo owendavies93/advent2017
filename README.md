@@ -13,3 +13,4 @@ TODO:
 * [ ] Improve immutability of day 6
 * [ ] Reduce complexity of day 7 part 2
 * [ ] Move day 14 part 2 logic into Grid class
+* [ ] Improve immutability of day 24
